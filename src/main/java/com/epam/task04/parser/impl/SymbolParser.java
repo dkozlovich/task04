@@ -18,7 +18,6 @@ public class SymbolParser implements TextParser {
         for (char symbol : symbols) {
             Symbol leaf = new Symbol(symbol);
             symbolComposite.add(leaf);
-            // logger.info(leaf);
         }
         return symbolComposite;
     }
