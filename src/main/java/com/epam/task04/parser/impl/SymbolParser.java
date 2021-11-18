@@ -1,7 +1,7 @@
 package com.epam.task04.parser.impl;
 
 import com.epam.task04.entity.ComponentType;
-import com.epam.task04.entity.Symbol;
+import com.epam.task04.entity.LetterAndSymbol;
 import com.epam.task04.entity.TextComposite;
 import com.epam.task04.parser.TextParser;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +16,7 @@ public class SymbolParser implements TextParser {
         TextComposite symbolComposite = new TextComposite(ComponentType.SYMBOL);
         char[] symbols = text.toCharArray();
         for (char symbol : symbols) {
-            Symbol leaf = new Symbol(symbol);
+            LetterAndSymbol leaf = new LetterAndSymbol(symbol);
             symbolComposite.add(leaf);
         }
         return symbolComposite;

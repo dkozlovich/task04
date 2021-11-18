@@ -5,11 +5,19 @@ import java.util.List;
 public interface TextComponent {
 
     void add(TextComponent component);
+
     void remove(TextComponent component);
-    List<TextComponent> getList();
+
+    List<TextComponent> getChild();
+
     int size();
+
     ComponentType getType();
-    String toString();
+
+    int hashCode();
 
     void setComponents(List<TextComponent> components);
+
+
+    String toString();
 }
