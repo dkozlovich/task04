@@ -16,19 +16,54 @@ public class CompositeService implements Service {
     private static final Logger logger = LogManager.getLogger();
 
     @Override
-    public List<TextComponent> sortParagraphs(TextComposite composite) {
-
-        List<TextComponent> sortedParagraphs = composite.getChild();
-        logger.info("Sorted paragraphs до: " + sortedParagraphs);
-        sortedParagraphs.sort(new Comparator<TextComponent>() {
-            public int compare(TextComponent o1, TextComponent o2) {
-                return o1.size() - o2.size();
+    public int countVowels(TextComponent sentence) {
+        final String VOWEL_REGEX = "[aeiouyаеёиоуыэюя]";
+        Pattern pattern = Pattern.compile(VOWEL_REGEX);
+        Matcher matcher;
+        int counter = 0;
+        List<TextComponent> lexemes = sentence.getChild();
+        for (TextComponent lexeme : lexemes) {
+            if (lexeme.getType().equals(ComponentType.WORD)) {
+                List<TextComponent> words = lexeme.getChild();
+                for (TextComponent word : words) {
+                    List<TextComponent> symbols = word.getChild();
+                    for (TextComponent symbol : symbols) {
+                        matcher = pattern.matcher(symbol.toString().toLowerCase());
+                        if (matcher.matches()) {
+                            counter++;
+                        }
+                    }
+                }
             }
-        });
-        logger.info("Sorted paragraphs: " + composite);
-        return sortedParagraphs;
+        }
+        logger.info("Number of vowels in sentence " + sentence + ": " + counter);
+        return counter;
     }
 
+    @Override
+    public int countConsonants(TextComponent sentence) {
+        final String CONSONANT_REGEX = "[bcdfghjklmnpqrstvwxzбвгджзйклмнпрстфхцчшщ]";
+        Pattern pattern = Pattern.compile(CONSONANT_REGEX);
+        Matcher matcher;
+        int counter = 0;
+        List<TextComponent> lexemes = sentence.getChild();
+        for (TextComponent lexeme : lexemes) {
+            if (lexeme.getType().equals(ComponentType.WORD)) {
+                List<TextComponent> words = lexeme.getChild();
+                for (TextComponent word : words) {
+                    List<TextComponent> symbols = word.getChild();
+                    for (TextComponent symbol : symbols) {
+                        matcher = pattern.matcher(symbol.toString().toLowerCase());
+                        if (matcher.matches()) {
+                            counter++;
+                        }
+                    }
+                }
+            }
+        }
+        logger.info("Number of consonants in sentence " + sentence + ": " + counter);
+        return counter;
+    }
     @Override
     public List<TextComponent> findSentencesWithLongWord(TextComposite composite) {
         int maxLength = 0;
@@ -123,52 +158,16 @@ public class CompositeService implements Service {
     }
 
     @Override
-    public int countVowels(TextComponent sentence) {
-        final String VOWEL_REGEX = "[aeiouyаеёиоуыэюя]";
-        Pattern pattern = Pattern.compile(VOWEL_REGEX);
-        Matcher matcher;
-        int counter = 0;
-        List<TextComponent> lexemes = sentence.getChild();
-        for (TextComponent lexeme : lexemes) {
-            if (lexeme.getType().equals(ComponentType.WORD)) {
-                List<TextComponent> words = lexeme.getChild();
-                for (TextComponent word : words) {
-                    List<TextComponent> symbols = word.getChild();
-                    for (TextComponent symbol : symbols) {
-                        matcher = pattern.matcher(symbol.toString().toLowerCase());
-                        if (matcher.matches()) {
-                            counter++;
-                        }
-                    }
-                }
-            }
-        }
-        logger.info("Number of vowels in sentence " + sentence + ": " + counter);
-        return counter;
-    }
+    public List<TextComponent> sortParagraphs(TextComposite composite) {
 
-    @Override
-    public int countConsonants(TextComponent sentence) {
-        final String CONSONANT_REGEX = "[bcdfghjklmnpqrstvwxzбвгджзйклмнпрстфхцчшщ]";
-        Pattern pattern = Pattern.compile(CONSONANT_REGEX);
-        Matcher matcher;
-        int counter = 0;
-        List<TextComponent> lexemes = sentence.getChild();
-        for (TextComponent lexeme : lexemes) {
-            if (lexeme.getType().equals(ComponentType.WORD)) {
-                List<TextComponent> words = lexeme.getChild();
-                for (TextComponent word : words) {
-                    List<TextComponent> symbols = word.getChild();
-                    for (TextComponent symbol : symbols) {
-                        matcher = pattern.matcher(symbol.toString().toLowerCase());
-                        if (matcher.matches()) {
-                            counter++;
-                        }
-                    }
-                }
+        List<TextComponent> sortedParagraphs = composite.getChild();
+        logger.info("Sorted paragraphs до: " + sortedParagraphs);
+        sortedParagraphs.sort(new Comparator<TextComponent>() {
+            public int compare(TextComponent o1, TextComponent o2) {
+                return o1.size() - o2.size();
             }
-        }
-        logger.info("Number of consonants in sentence " + sentence + ": " + counter);
-        return counter;
+        });
+        logger.info("Sorted paragraphs: " + composite);
+        return sortedParagraphs;
     }
 }
