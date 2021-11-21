@@ -7,6 +7,7 @@ import com.epam.task04.exception.CustomException;
 import java.util.List;
 
 public interface Service {
+
     List<TextComponent> sortParagraphs(TextComposite composite) throws CustomException;
 
     List<TextComponent> findSentencesWithLongWord(TextComposite composite) throws CustomException;

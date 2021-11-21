@@ -19,19 +19,20 @@ public class CompositeService implements Service {
     public List<TextComponent> sortParagraphs(TextComposite composite) {
 
         List<TextComponent> sortedParagraphs = composite.getChild();
+        logger.info("Sorted paragraphs до: " + sortedParagraphs);
         sortedParagraphs.sort(new Comparator<TextComponent>() {
             public int compare(TextComponent o1, TextComponent o2) {
                 return o1.size() - o2.size();
             }
         });
-        logger.info("Sorted paragraphs: " + sortedParagraphs);
+        logger.info("Sorted paragraphs: " + composite);
         return sortedParagraphs;
     }
 
     @Override
     public List<TextComponent> findSentencesWithLongWord(TextComposite composite) {
         int maxLength = 0;
-        List<TextComponent> sentencesWithWord = new ArrayList<>();
+        List<TextComponent> sentenceWithWord = new ArrayList<>();
         List<TextComponent> paragraphs = composite.getChild();
         for (TextComponent paragraph : paragraphs) {
             List<TextComponent> sentences = paragraph.getChild();
@@ -42,15 +43,15 @@ public class CompositeService implements Service {
                     for (TextComponent word : wordsAndSymbols) {
                         if (word.size() > maxLength) {
                             maxLength = word.size();
-                            sentencesWithWord.clear();
-                            sentencesWithWord.add(sentence);
+                            sentenceWithWord.clear();
+                            sentenceWithWord.add(sentence);
                         }
                     }
                 }
             }
         }
-        logger.info("Sentences with the longest word: " + sentencesWithWord);
-        return sentencesWithWord;
+        logger.info("Sentence with the longest word: " + sentenceWithWord);
+        return sentenceWithWord;
     }
 
     @Override
@@ -75,10 +76,14 @@ public class CompositeService implements Service {
                 }
                 count = 0;
             }
-            paragraph.setComponents(sentencesAfterRemoving);
+            if (sentencesAfterRemoving.isEmpty()) {
+                paragraphs.remove(paragraph);
+            } else {
+                paragraph.setComponents(sentencesAfterRemoving);
+            }
             sentencesAfterRemoving.removeAll(sentences);
         }
-        logger.info("Text without sentence with  words less than " + wordsAmount + ": " + composite);
+        logger.info("Text without sentence with words less than " + wordsAmount + ": " + composite);
 
     }
 
@@ -112,7 +117,7 @@ public class CompositeService implements Service {
             }
         }
         for (String word : result) {
-            logger.info("Words that repeat in text: " + word + "/n");
+            logger.info("Repeated words in text: " + word + "/n");
         }
         return result;
     }

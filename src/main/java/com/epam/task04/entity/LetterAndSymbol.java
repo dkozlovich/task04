@@ -10,12 +10,12 @@ public class LetterAndSymbol implements TextComponent {
     private static final Logger logger = LogManager.getLogger();
 
     private ComponentType componentType;
+
     private char character;
 
     public LetterAndSymbol(char character) {
         this.character = character;
     }
-
 
     public LetterAndSymbol(ComponentType componentType, char character) {
         this.componentType = componentType;
@@ -56,7 +56,9 @@ public class LetterAndSymbol implements TextComponent {
         if (this == o) return true;
         if (!(o instanceof LetterAndSymbol)) return false;
         LetterAndSymbol that = (LetterAndSymbol) o;
-        return character == that.character && (componentType != null ? componentType == that.componentType : that.componentType == null);
+        return character == that.character && (componentType != null ?
+                componentType == that.componentType :
+                that.componentType == null);
     }
 
     @Override
@@ -70,14 +72,11 @@ public class LetterAndSymbol implements TextComponent {
 
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append(character)
-                .toString();
+        return Character.toString(character);
     }
 
     @Override
     public void setComponents(List<TextComponent> components) {
         throw new UnsupportedOperationException();
     }
-
 }

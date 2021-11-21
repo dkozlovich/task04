@@ -15,7 +15,8 @@ public class LexemeParser implements TextParser {
     private final String LEXEME_REGEX = "\\s";
     private final String WORD_DELIMITER_REGEX = "[А-я\\p{Alpha}]+";
     private final String PRE_PUNCTUATION_REGEX = "^\\p{Punct}(?!\\d)";
-    private final String POST_PUNCTUATION_REGEX = "(?<!\\d)\\p{Punct}$";
+    private final String POST_PUNCTUATION_REGEX = "(?<!\\d)\\p{Punct}+$";
+    private final int POST_PUNCTUATION_MIN_LENGTH = 1;
     private final TextParser wordParser = new WordParser();
     private final TextParser symbolParser = new SymbolParser();
 
@@ -25,40 +26,34 @@ public class LexemeParser implements TextParser {
         String[] lexemes = data.split(LEXEME_REGEX);
 
         for (String lexeme : lexemes) {
-            Pattern pattern = Pattern.compile(MATH_REGEX);
+            regexParse(lexeme, MATH_REGEX, lexemeComposite);
+            regexParse(lexeme, PRE_PUNCTUATION_REGEX, lexemeComposite);
+
+            Pattern pattern = Pattern.compile(WORD_DELIMITER_REGEX);
             Matcher matcher = pattern.matcher(lexeme);
-            List<String> math = new ArrayList<>();
-            while (matcher.find()) {math.add(matcher.group());}
-            if (!math.isEmpty()) {
-                for (String symbol : math) {
-                    TextComposite mathComposite = symbolParser.parse(symbol);
-                    lexemeComposite.add(mathComposite);
-                }
-            } else {
-                pattern = Pattern.compile(PRE_PUNCTUATION_REGEX);
-                matcher = pattern.matcher(lexeme);
-                List<String> punctuation = new ArrayList<>();
-                while (matcher.find()) {punctuation.add(matcher.group());}
-                for (String symbol : punctuation) {
-                    TextComposite punctuationComposite = symbolParser.parse(symbol);
-                    lexemeComposite.add(punctuationComposite);
-                }
-                pattern = Pattern.compile(WORD_DELIMITER_REGEX);
-                matcher = pattern.matcher(lexeme);
-                if (matcher.find()) {
-                    TextComposite wordComposite = wordParser.parse(matcher.group());
-                    lexemeComposite.add(wordComposite);
-                }
-                pattern = Pattern.compile(POST_PUNCTUATION_REGEX);
-                matcher = pattern.matcher(lexeme);
-                punctuation = new ArrayList<>();
-                while (matcher.find()) {punctuation.add(matcher.group());}
-                for (String symbol : punctuation) {
-                    TextComposite punctuationComposite = symbolParser.parse(symbol);
-                    lexemeComposite.add(punctuationComposite);
-                }
+            if (matcher.find()) {
+                TextComposite nextComposite = wordParser.parse(matcher.group());
+                lexemeComposite.add(nextComposite);
+            }
+            if (lexeme.length() > POST_PUNCTUATION_MIN_LENGTH) {
+                regexParse(lexeme, POST_PUNCTUATION_REGEX, lexemeComposite);
             }
         }
         return lexemeComposite;
+    }
+
+    private void regexParse(String lexeme, String REGEX, TextComposite lexemeComposite) {
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(lexeme);
+        List<String> component = new ArrayList<>();
+        while (matcher.find()) {
+            component.add(matcher.group());
+        }
+        if (!component.isEmpty()) {
+            for (String symbol : component) {
+                TextComposite composite = symbolParser.parse(symbol);
+                lexemeComposite.add(composite);
+            }
+        }
     }
 }

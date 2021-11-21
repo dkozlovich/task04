@@ -12,12 +12,13 @@ public interface TextComponent {
 
     int size();
 
-    ComponentType getType();
-
-    int hashCode();
-
     void setComponents(List<TextComponent> components);
 
+    ComponentType getType();
+
+    boolean equals(Object o);
+
+    int hashCode();
 
     String toString();
 }
